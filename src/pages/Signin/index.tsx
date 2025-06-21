@@ -1,7 +1,19 @@
-import { Link } from 'react-router-dom';
-import '../Signup/auth.css';
+import { Link } from "react-router-dom";
+import "../Signup/auth.css";
+import { useState } from "react";
+import { authRepository } from "../../modules/auth/auth.repository";
 
 function Signin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const signin = async () => {
+    if (email === "" || password === "") return;
+
+    const { user, token } = await authRepository.signin(email, password);
+    console.log(user, token);
+  };
+
   return (
     <div className="signup-container">
       <div className="signup-form-container">
@@ -10,13 +22,30 @@ function Signin() {
 
         <div>
           <div className="form-group">
-            <input type="email" placeholder="Email" required />
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="Email"
+              value={email}
+              required
+            />
           </div>
 
           <div className="form-group">
-            <input type="password" placeholder="Password" required />
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              placeholder="Password"
+              value={password}
+              required
+            />
           </div>
-          <button type="submit" className="continue-button">
+          <button
+            onClick={signin}
+            type="submit"
+            disabled={email == "" || password == ""}
+            className="continue-button"
+          >
             Continue
           </button>
         </div>
