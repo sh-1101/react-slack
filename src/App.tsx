@@ -3,8 +3,33 @@ import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import CreateWorkspace from "./pages/CreateWorkspace";
 import Home from "./pages/Home";
+import { useEffect, useState } from "react";
+import { useCurrentUserStore } from "./modules/auth/current-user.state";
+import { authRepository } from "./modules/auth/auth.repository";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { setCurrentUser } = useCurrentUserStore();
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await authRepository.getCurrentUser();
+      setCurrentUser(user);
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div />;
+  }
+
   return (
     <BrowserRouter>
       <div>

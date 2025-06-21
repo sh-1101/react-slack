@@ -15,8 +15,8 @@ function Signin() {
     if (email === "" || password === "") return;
 
     const { user, token } = await authRepository.signin(email, password);
+    localStorage.setItem("token", token);
     setCurrentUser(user);
-    console.log(user, token);
   };
 
   return (
