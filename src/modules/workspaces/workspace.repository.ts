@@ -9,4 +9,10 @@ export const workspaceRepository = {
 
     return new Workspace(result.data);
   },
+
+  async find(): Promise<Workspace[]> {
+    const result = await api.get("/workspaces");
+
+    return result.data.map((workspace: Workspace) => new Workspace(workspace));
+  },
 };
