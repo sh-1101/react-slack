@@ -36,6 +36,7 @@ function Home() {
     <div className="slack-container">
       <WorkspaceSelector
         workspaces={workspaces}
+        setWorkspaces={setWorkspaces}
         selectedWorkspaceId={workspaceId!}
       />
       {selectedWorkspace != null ? (
