@@ -1,0 +1,19 @@
+import api from "../../lib/api";
+import { Channel } from "./channel.entity";
+
+export const channelRepository = {
+  async create(workspaceId: string, name: string): Promise<Channel> {
+    const result = await api.post("/channels", {
+      workspaceId,
+      name,
+    });
+
+    return new Channel(result.data);
+  },
+
+  async find(workspaceId: string): Promise<Channel[]> {
+    const result = await api.get(`/channels/${workspaceId}`);
+
+    return result.data.map((channel: Channel) => new Channel(channel));
+  },
+};

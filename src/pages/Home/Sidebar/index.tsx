@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
+import { useUiStore } from "../../../modules/ui/ui.state";
 import type { Workspace } from "../../../modules/workspaces/workspace.entity";
 import CreateChannelModal from "./CreateChannelModal";
 import UserSearchModal from "./UserSearchModal";
+import { channelRepository } from "../../../modules/channels/channel.repository";
 
 interface Props {
   selectedWorkspace: Workspace;
@@ -8,6 +11,22 @@ interface Props {
 
 function Sidebar(props: Props) {
   const { selectedWorkspace } = props;
+  const { showCreateChannelModal, setShowCreateChannelModal } = useUiStore();
+
+  const navigate = useNavigate();
+
+  const createChannel = async (name: string) => {
+    try {
+      const newChannel = await channelRepository.create(
+        selectedWorkspace.id,
+        name
+      );
+      setShowCreateChannelModal(false);
+      navigate(`/${selectedWorkspace.id}/${newChannel.id}`);
+    } catch (error) {
+      console.error("Error creating channel:", error);
+    }
+  };
 
   return (
     <div className="sidebar">
@@ -29,7 +48,7 @@ function Sidebar(props: Props) {
           <li key={1} className={"active"}>
             <span className="channel-icon">#</span> {"test"}
           </li>
-          <li>
+          <li onClick={() => setShowCreateChannelModal(true)}>
             <span className="channel-icon add">+</span> Add channels
           </li>
         </ul>
@@ -38,7 +57,9 @@ function Sidebar(props: Props) {
           <span className="channel-icon add">+</span> Invite Pepole
         </div>
       </div>
-      {/* <CreateChannelModal /> */}
+      {showCreateChannelModal && (
+        <CreateChannelModal onSubmit={createChannel} />
+      )}
       {/* <UserSearchModal /> */}
     </div>
   );
