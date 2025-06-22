@@ -4,13 +4,16 @@ import type { Workspace } from "../../../modules/workspaces/workspace.entity";
 import CreateChannelModal from "./CreateChannelModal";
 import UserSearchModal from "./UserSearchModal";
 import { channelRepository } from "../../../modules/channels/channel.repository";
+import type { Channel } from "../../../modules/channels/channel.entity";
 
 interface Props {
   selectedWorkspace: Workspace;
+  selectedChannelId?: string;
+  channels: Channel[];
 }
 
 function Sidebar(props: Props) {
-  const { selectedWorkspace } = props;
+  const { selectedWorkspace, selectedChannelId, channels } = props;
   const { showCreateChannelModal, setShowCreateChannelModal } = useUiStore();
 
   const navigate = useNavigate();
@@ -45,9 +48,15 @@ function Sidebar(props: Props) {
           <h3>Channels</h3>
         </div>
         <ul className={`channels-list expanded`}>
-          <li key={1} className={"active"}>
-            <span className="channel-icon">#</span> {"test"}
-          </li>
+          {channels.map((channel) => (
+            <li
+              key={channel.id}
+              className={selectedChannelId === channel.id ? "active" : ""}
+              onClick={() => navigate(`/${selectedWorkspace.id}/${channel.id}`)}
+            >
+              <span className="channel-icon">#</span> {channel.name}
+            </li>
+          ))}
           <li onClick={() => setShowCreateChannelModal(true)}>
             <span className="channel-icon add">+</span> Add channels
           </li>
