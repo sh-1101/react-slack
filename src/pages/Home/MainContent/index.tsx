@@ -1,11 +1,35 @@
+import { useNavigate } from "react-router-dom";
 import type { Channel } from "../../../modules/channels/channel.entity";
+import { channelRepository } from "../../../modules/channels/channel.repository";
 
 interface Props {
   selectedChannel: Channel;
+  channels: Channel[];
+  setChannels: (channels: Channel[]) => void;
+  selectedWorkspaceId: string;
 }
 
 function MainContent(props: Props) {
-  const { selectedChannel } = props;
+  const { selectedChannel, channels, setChannels, selectedWorkspaceId } = props;
+  const navigate = useNavigate();
+
+  const deleteChannel = async () => {
+    try {
+      const confirmed = window.confirm(
+        "このチャンネルを削除しますか？\nこの操作は元に戻せません。"
+      );
+      if (!confirmed) return;
+      await channelRepository.delete(selectedChannel.id);
+
+      const updatedChannels = channels.filter(
+        (channel) => channel.id !== selectedChannel.id
+      );
+      setChannels(updatedChannels);
+      navigate(`/${selectedWorkspaceId}/${updatedChannels[0]?.id || ""}`);
+    } catch (error) {
+      console.error("Error deleting channel:", error);
+    }
+  };
   return (
     <div className="main-content">
       <header className="channel-header">
@@ -15,7 +39,7 @@ function MainContent(props: Props) {
         <div className="channel-actions">
           <button
             className="delete-channel-button"
-            onClick={() => {}}
+            onClick={() => deleteChannel()}
             title="チャンネルを削除"
           >
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">

@@ -16,4 +16,9 @@ export const channelRepository = {
 
     return result.data.map((channel: Channel) => new Channel(channel));
   },
+
+  async delete(channelId: string): Promise<boolean> {
+    await api.delete(`/channels/${channelId}`);
+    return true;
+  },
 };
